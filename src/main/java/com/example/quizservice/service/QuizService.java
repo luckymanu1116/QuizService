@@ -3,6 +3,7 @@ package com.example.quizservice.service;
 
 
 import com.example.quizservice.dao.QuizDao;
+import com.example.quizservice.feign.QuizInterface;
 import com.example.quizservice.model.QuestionWrapper;
 import com.example.quizservice.model.Quiz;
 import com.example.quizservice.model.Response;
@@ -20,18 +21,17 @@ public class QuizService {
 
     @Autowired
     QuizDao quizDao;
-//    @Autowired
-//    QuestionDao questionDao;
+    @Autowired
+    QuizInterface quizInterface;
 
 
     public ResponseEntity<String> createQuiz(String category, int numQ, String title) {
+        List<Integer> questions = quizInterface.getQuestionForQuiz(category, numQ).getBody();
+        Quiz quiz = new Quiz();
+        quiz.setTitle(title);
+        quiz.setQuestionIds(questions);
+        quizDao.save(quiz);
 
-//        List<Question> questions = questionDao.findRandomQuestionsByCategory(category, numQ);
-//
-//        Quiz quiz = new Quiz();
-//        quiz.setTitle(title);
-//        quiz.setQuestions(questions);
-//        quizDao.save(quiz);
 
         return new ResponseEntity<>("Success", HttpStatus.CREATED);
 
